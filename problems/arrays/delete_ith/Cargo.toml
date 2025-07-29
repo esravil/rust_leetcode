@@ -1,0 +1,6 @@
+[package]
+name = "delete_ith"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
