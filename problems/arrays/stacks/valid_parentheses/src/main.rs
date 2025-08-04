@@ -15,32 +15,31 @@ impl Solution {
 
         ]);
 
-        // iterate each char
         for c in s.chars() {
 
+            // check if the closing bracket in the hashmap
             if hm.contains_key(&c) {
 
-                if !v.is_empty() && v[v.len() - 1] == *hm.get(&c).unwrap() { // .get might not exist but we alr checked that, hence get returns Option<&char> variant. unwrap gets &char inside the option, and * dereferences it
+                // .get returns Option<&T>, so unwrap gets &T, and * gets T itself
+                if !stack.is_empty() && stack[stack.len() - 1] == *hm.get(&c).unwrap() { // check if last element in stack is the same as the corresponding value to the character
 
-                    v.pop(); // found matching set of paren
-                    // we pop the val if we find its last in the stack and in the hashmap
+                    stack.pop();
 
                 } else {
 
-                    return false; // meaning we either got an erroneous char, or we have a mismatch paren
+                    return false; // we found the error where we have a closing paren, but stack either has no opening bracket or last stack item doesnt correspond.
 
                 }
 
             } else {
 
-                v.push(c); 
+                stack.push(c); // add the opening brackets to the stack
 
             }
 
-        };
+        }
 
-
-        v.is_empty() // will execute based on iter
+        stack.is_empty(); // if we have in order and valid paren, stack should be empty
 
     }
 
