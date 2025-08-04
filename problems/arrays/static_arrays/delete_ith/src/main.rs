@@ -1,30 +1,30 @@
 fn main() {
-    
-    let mut arr: [i32; 3] = [1, 2, 3];
-    let l = arr.len();
 
-    delete_ith(&mut arr, l, 0);
-
-    println!("{:?}", arr);
+    let mut arr = [1, 2, 3, 4, 5];
+    delete_ith(&mut arr, 0);
+    println!("{:?}", &arr[..]);
 
 }
 
-fn delete_ith(arr: &mut [i32], length: usize, i: usize) {
+fn delete_ith(arr: &mut [i32], i: usize) {
 
-    // so assume we delete first element
-    // all elements will need to shift left 1 unit.
-    
-    // therefore, we need to iterate from beginning of arr.
-    // for each ith value, we swap with the i + 1 index val
-    // therefore, the 2 last values will always be the same.
+    // why is i usize and not i32?
+    // A: because you cannot index via the i32 without casting via as
 
-    // since we want to remove the i
-    // also, we wont actually iterate from 0th always, since i can vary
+    // intuition:
+    // since we want to delete the ith index, lets do the extreme condition
+    // lets delete the 0th index element
+    // if we delete 0th index element, all other elements on right is shifted to the left 1 space
+    // we will need to swap the next index with the previous index starting from i + 1
 
-    // therefore, index is the next val (i + 1), and index - 1 = index
-    for index in i + 1 .. length {
+    if arr.len() >= 1 { // rust does NOT provide a method called is empty in the methods for static arrs
 
-        arr[index - 1] = arr[index];
+        for index in i + 1 .. arr.len() { // as long as we have elements (len), we iter
+
+            arr[index - 1] = arr[index]; // this works because the index = i + 1 index val
+            // so index - 1 = ith val, we shift everything to the left
+
+        }
 
     }
 
