@@ -1,7 +1,7 @@
 // implement a dynamic array in rust
 struct DynamicArray<T> {
 
-    data: Box<[Option<T>]>,
+    data: Box<[Option<T>]>, // this shows a slice of Option<T> types in the data!
     len: usize,
     capacity: usize,
 
