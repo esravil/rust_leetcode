@@ -17,13 +17,13 @@ struct LinkedList {
 
 impl LinkedList {
 
-    fn new(val: i32) -> Self {
+    fn new() -> Self {
 
         let dummy_node = Box::new(
 
             Node {
 
-                val,
+                val: -1,
                 next: None,
 
             }
@@ -58,7 +58,7 @@ impl LinkedList {
 
                 }
 
-                curr = &node.next // iterate through the nodes
+                curr = &node.next; // iterate through the nodes
                 i += 1; // inc the loop cond
 
             }
@@ -70,24 +70,16 @@ impl LinkedList {
     }
 
     fn insert_head(&mut self, val: i32) {
-
-        // new node
-        let new_node = Box::new(
-
+        let new_node = Box::new(Node {
             val,
-            next: self.head.next.take(), // we take the Node owned by Box out with take
+            next: self.head.next.take(),
+        });
+        self.head.next = Some(new_node);
 
-        );
-
-        self.head.next = Some(new_node); // now we place it in a option enum, as specced by node enum next field
-
-        // this part is a bit iffy bc of the # of method chains, but its to update the tail val
-        if self.head.as_ref().unwrap().next.is_none() {
-
-            self.tail = &mut self.head.next.as_mut().unwrap() as *mut Node;
-
+        // If the list was empty, update tail to the new node
+        if self.head.next.as_ref().unwrap().next.is_none() {
+            self.tail = &mut **self.head.next.as_mut().unwrap() as *mut Node;
         }
-
     }
 
     fn insert_tail(&mut self, val: i32) {
@@ -108,7 +100,7 @@ impl LinkedList {
 
         unsafe {
 
-            (*self.tail).next = new_node;
+            (*self.tail).next = Some(new_node);
             self.tail = ptr;
 
         }
@@ -118,14 +110,14 @@ impl LinkedList {
     fn remove(&mut self, index: usize) -> bool {
 
         let mut i = 0;
-        let mut curr = &self.head;
+        let mut curr = &mut self.head;
 
         // iter to the node before the indexed node
         while i < index {
 
-            if let Some(ref mut node) = curr {
+            if let Some(ref mut node) = curr.next {
 
-                curr = &node.next;
+                curr = node;
                 i += 1;
 
             } else {
@@ -136,7 +128,7 @@ impl LinkedList {
 
         }
 
-        if let Some(removed_node) = curr.next {
+        if let Some(removed_node) = curr.next.take() {
 
             curr.next = removed_node.next;
 
@@ -176,7 +168,7 @@ impl LinkedList {
 
 impl Drop for LinkedList {
 
-    fn drop(&self) {
+    fn drop(&mut self) {
 
         let mut curr = self.head.next.take();
         while let Some(node) = curr {
