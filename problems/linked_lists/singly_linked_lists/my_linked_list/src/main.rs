@@ -18,7 +18,7 @@ struct Node<T> {
 // for simplicity sake, we will track both head and tail pointers for easier method implementations
 
 // this struct is trait bound by Copy and Debug traits
-struct LinkedList<T> {
+struct LinkedList<T: Copy> {
 
     // Remember, pointers can also be None, so its best to use Option enum!
     head: Box<Node<T>>,
@@ -31,7 +31,7 @@ impl<T: Copy + Debug> LinkedList<T> {
     fn new(dummy_val: T) -> Self {
 
         // create first node in the linked list
-        let dummy = Box::new([
+        let dummy = Box::new(
 
             Node {
 
@@ -40,7 +40,7 @@ impl<T: Copy + Debug> LinkedList<T> {
 
             }
 
-        ]);
+        );
 
         // lets get the raw pointer ready to assign to the tail
         let dummy_ptr = &*dummy as *const Node<T> as *mut Node<T>; // since dummy is a boxed Node, we get Node<T> by deref. Then we need to cast to const before casting to mut for safety
@@ -57,7 +57,7 @@ impl<T: Copy + Debug> LinkedList<T> {
 
     fn insert_at_end(&mut self, val: T) {
 
-        let new_node = Box::new([
+        let new_node = Box::new(
 
             Node {
 
@@ -66,7 +66,7 @@ impl<T: Copy + Debug> LinkedList<T> {
 
             }
 
-        ]);
+        );
 
         // raw pointer to reassign the tail
         let new_node_ptr = &*new_node as *const Node<T> as *mut Node<T>;
