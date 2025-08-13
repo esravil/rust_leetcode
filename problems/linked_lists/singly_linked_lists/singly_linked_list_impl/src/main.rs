@@ -48,7 +48,7 @@ impl LinkedList {
         let mut i = 0;
         let mut curr = &self.head.next; // we iter from the first non dummy
 
-        while i < index {
+        while i <= index { // needs to be inclusive of index or else wont ever work.
 
             if let Some(node) = curr {
 
@@ -70,11 +70,16 @@ impl LinkedList {
     }
 
     fn insert_head(&mut self, val: i32) {
+
         let new_node = Box::new(Node {
             val,
-            next: self.head.next.take(),
+            next: self.head.next.take(), // the take method is used on Option or option type
+            // this take method take the option enum type and then if has a Some variant, returns the Some val and original option is none
+            // if none if the variant of the option, it keeps original option as none, 
+            // just basically facilitates a move out of the enum
         });
-        self.head.next = Some(new_node);
+
+        self.head.next = Some(new_node); // this None option is now set to a some new node val!
 
         // If the list was empty, update tail to the new node
         if self.head.next.as_ref().unwrap().next.is_none() {
@@ -115,22 +120,25 @@ impl LinkedList {
         // iter to the node before the indexed node
         while i < index {
 
-            if let Some(ref mut node) = curr.next {
+            if let Some(ref mut node) = curr.next { // q1: why must we make ref mut node = curr.next? why not simply do Some(node) = curr.next? is it because next is a Option<Box<Node>>?
 
                 curr = node;
                 i += 1;
 
             } else {
 
+                // index is found to be invalid / out of bounds
                 return false;
 
             }
 
         }
 
-        if let Some(removed_node) = curr.next.take() {
+        // curr.next = None, and its val is now moved to removed node.
+        if let Some(removed_node) = curr.next.take() { // take() moves the next Option enum val in the curr.next and turns it to None, then Some(removed) node gets the moved value
 
-            curr.next = removed_node.next;
+            // now we can assign curr.next to skip next node
+            curr.next = removed_node.next; // skip removed node
 
             if curr.next.is_none() {
 
@@ -170,7 +178,9 @@ impl Drop for LinkedList {
 
     fn drop(&mut self) {
 
-        let mut curr = self.head.next.take();
+        let mut curr = self.head.next.take(); // the Option<Box<Node>> variant is moved to curr, self.head.next is None
+        // now that curr is assigned to node.
+        // curr = node.next, 
         while let Some(node) = curr {
 
             curr = node.next;
